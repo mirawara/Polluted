@@ -1,10 +1,8 @@
 package it.unipi.dii.msss.polluted
 
 enum class AirQuality(val value: Int) {
-    GOOD(0),
-    MODERATE(1),
-    UNHEALTHY_FOR_SENSITIVE_GROUPS(2),
-    UNHEALTHY(3),
-    VERY_UNHEALTHY(4),
-    SEVERE(5)
+    IRRELEVANT_INPUT(0),
+    MODERATE_POLLUTION(1),
+    NO_POLLUTION(2),
+    SEVERE_POLLUTION(3)
 }
