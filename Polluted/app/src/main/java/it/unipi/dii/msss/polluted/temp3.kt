@@ -68,7 +68,6 @@ fun sendPollInfo(context: Context, activity: Activity, tag: String) {
 }
 
 
-@SuppressLint("RestrictedApi")
 fun do_avg(location: Location, distanceInMeters: Int) {
 
 // Calcola le coordinate di latitudine e longitudine minime e massime per il range di 30km intorno alla posizione desiderata
@@ -98,5 +97,6 @@ fun do_avg(location: Location, distanceInMeters: Int) {
                 numDocuments++
             }
             val avg=totalPollutionLevel/numDocuments
+
         }
 }
