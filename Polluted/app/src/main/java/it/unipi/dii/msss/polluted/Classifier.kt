@@ -66,18 +66,22 @@ class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int) 
         val intValues = IntArray(bitmap.width * bitmap.height)
 
         bitmap.getPixels(intValues, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
-        var pixel = 0
+        //var pixel = 0
         for (i in 0 until 160) {
             for (j in 0 until 160) {
+                //pixel = bitmap.getPixel(i,j)
                 val index = j * bitmap.width / 160 + i * bitmap.height / 160 * bitmap.width
                 val value = intValues[index]
-                byteBuffer.put(((value shr 16) and 0xFF).toByte())
-                byteBuffer.put(((value shr 8) and 0xFF).toByte())
-                byteBuffer.put((value and 0xFF).toByte())
+                //val value = pixel
+                byteBuffer.put(((value shr 16) and 0xFF - 128).toByte())
+                byteBuffer.put(((value shr 8) and 0xFF - 128).toByte())
+                byteBuffer.put((value and 0xFF - 128).toByte())
             }
         }
         byteBuffer.rewind()
+
         return byteBuffer
+
     }
 
     fun recognizeImage(bitmap: Bitmap) : String {
