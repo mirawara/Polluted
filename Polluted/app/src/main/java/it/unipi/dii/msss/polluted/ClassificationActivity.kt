@@ -14,8 +14,10 @@ class ClassificationActivity : AppCompatActivity() {
 
     lateinit var bitmap: Bitmap
     private val mInputSize = 224
-    private val mModelPath = "10_1024_best.tflite"
+    private val classifierInputSize = 160
+    private val mModelPath = "trained.tflite"
     private val mLabelPath = "labels.txt"
+    private val Classifier = Classifier(assets, mModelPath, classifierInputSize)
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +36,9 @@ class ClassificationActivity : AppCompatActivity() {
         val getAQButton : Button = findViewById(R.id.button3)
 
         getAQButton.setOnClickListener {
+
             //classify
+            val result = Classifier.recognizeImage(bitmap)
             //send
         }
     }

@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.test.platform.app.InstrumentationRegistry
 import org.tensorflow.lite.Interpreter
 import java.io.FileInputStream
 import java.nio.ByteBuffer
@@ -15,8 +14,8 @@ import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.util.*
 
-import it.unipi.dii.msss.polluted.AirQuality
 import java.io.File
+import kotlin.math.pow
 
 class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int) {
 
@@ -27,6 +26,7 @@ class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int) 
     private val IMAGE_STD = 255.0f
     private val MAX_RESULTS = 3
     private val THRESHOLD = 0.4f
+    private val scaleFactor: Float = 0.00390625.toFloat()
 
     init {
         INTERPRETER = Interpreter(loadModelFile(assetManager, modelPath))
@@ -42,7 +42,7 @@ class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int) 
     }
 
     private fun convertBitmapToByteBuffer(bitmap: Bitmap): ByteBuffer {
-        val byteBuffer = ByteBuffer.allocateDirect(4 * INPUT_SIZE * INPUT_SIZE * PIXEL_SIZE)
+        val byteBuffer = ByteBuffer.allocateDirect(INPUT_SIZE * INPUT_SIZE * PIXEL_SIZE)
         byteBuffer.order(ByteOrder.nativeOrder())
         val intValues = IntArray(INPUT_SIZE * INPUT_SIZE)
 
@@ -60,14 +60,51 @@ class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int) 
         return byteBuffer
     }
 
-    fun recognizeImage(bitmap: Bitmap) {
+    private fun convertBitmapToByteBuffer1(bitmap: Bitmap): ByteBuffer {
+        val byteBuffer = ByteBuffer.allocateDirect(160 * 160 * 3)
+        byteBuffer.order(ByteOrder.nativeOrder())
+        val intValues = IntArray(bitmap.width * bitmap.height)
+
+        bitmap.getPixels(intValues, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+        var pixel = 0
+        for (i in 0 until 160) {
+            for (j in 0 until 160) {
+                val index = j * bitmap.width / 160 + i * bitmap.height / 160 * bitmap.width
+                val value = intValues[index]
+                byteBuffer.put(((value shr 16) and 0xFF).toByte())
+                byteBuffer.put(((value shr 8) and 0xFF).toByte())
+                byteBuffer.put((value and 0xFF).toByte())
+            }
+        }
+        byteBuffer.rewind()
+        return byteBuffer
+    }
+
+    fun recognizeImage(bitmap: Bitmap) : String {
 
         val scaledBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false)
-        val byteBuffer = convertBitmapToByteBuffer(scaledBitmap)
+        val byteBuffer = convertBitmapToByteBuffer1(scaledBitmap)
 
-        val result = Array(1) { FloatArray(AirQuality.values().size) }
+        val result = Array(1) { ByteArray(AirQuality.values().size) }
 
         INTERPRETER.run(byteBuffer, result)
-        println(result)
+
+        val floatResult = FloatArray(AirQuality.values().size)
+
+        for (i in 0..5) {
+            floatResult[i] = (result[0][i].toFloat() + 128) * scaleFactor
+        }
+
+        val argmax = floatResult.mapIndexed { index, value -> index to value }.maxByOrNull { it.second }!!.first
+
+        return when (argmax) {
+            AirQuality.GOOD.value -> "0"
+            AirQuality.MODERATE.value -> "1"
+            AirQuality.UNHEALTHY_FOR_SENSITIVE_GROUPS.value -> "2"
+            AirQuality.UNHEALTHY.value -> "3"
+            AirQuality.VERY_UNHEALTHY.value -> "4"
+            AirQuality.SEVERE.value -> "5"
+            else -> "unknown"
+        }
     }
 }
