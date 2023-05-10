@@ -14,7 +14,7 @@ class ClassificationActivity : AppCompatActivity() {
 
     lateinit var bitmap: Bitmap
     private val mInputSize = 224
-    private val classifierInputSize = 160
+    private val classifierInputSize = 224
     private val mModelPath = "trained.tflite"
     private val mLabelPath = "labels.txt"
     private val Classifier = Classifier(assets, mModelPath, classifierInputSize)
