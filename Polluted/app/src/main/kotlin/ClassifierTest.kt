@@ -21,7 +21,7 @@ class ClassifierTest {
     @Test
     fun classifierTest() {
 
-        //val assetManager = InstrumentationRegistry.getInstrumentation().targetContext.assets
+        val assetManager = InstrumentationRegistry.getInstrumentation().targetContext.assets
 
         val classifier = Classifier(assetManager, "10_1024_best.tflite", 224)
 

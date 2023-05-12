@@ -24,9 +24,6 @@ class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int) 
     private val PIXEL_SIZE: Int = 3
     private val IMAGE_MEAN = 0
     private val IMAGE_STD = 255.0f
-    private val MAX_RESULTS = 3
-    private val THRESHOLD = 0.4f
-    private val scaleFactor: Float = 0.00390625.toFloat()
 
     init {
         INTERPRETER = Interpreter(loadModelFile(assetManager, modelPath))
@@ -42,7 +39,7 @@ class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int) 
     }
 
     private fun convertBitmapToByteBuffer(bitmap: Bitmap): ByteBuffer {
-        val byteBuffer = ByteBuffer.allocateDirect(INPUT_SIZE * INPUT_SIZE * PIXEL_SIZE)
+        val byteBuffer = ByteBuffer.allocateDirect(4*INPUT_SIZE * INPUT_SIZE * PIXEL_SIZE)
         byteBuffer.order(ByteOrder.nativeOrder())
         val intValues = IntArray(INPUT_SIZE * INPUT_SIZE)
 
@@ -84,31 +81,17 @@ class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int) 
 
     }
 
-    fun recognizeImage(bitmap: Bitmap) : String {
+    fun recognizeImage(bitmap: Bitmap) : Int {
 
         val scaledBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false)
-        val byteBuffer = convertBitmapToByteBuffer1(scaledBitmap)
+        val byteBuffer = convertBitmapToByteBuffer(scaledBitmap)
 
-        val result = Array(1) { ByteArray(AirQuality.values().size) }
+        val result = Array(1) { FloatArray(AirQuality.values().size) }
 
         INTERPRETER.run(byteBuffer, result)
 
-        val floatResult = FloatArray(AirQuality.values().size)
+        val argmax = result[0].mapIndexed { index, value -> index to value }.maxByOrNull { it.second }!!.first
 
-        for (i in 0..5) {
-            floatResult[i] = (result[0][i].toFloat() + 128) * scaleFactor
-        }
-
-        val argmax = floatResult.mapIndexed { index, value -> index to value }.maxByOrNull { it.second }!!.first
-
-        return when (argmax) {
-            AirQuality.GOOD.value -> "0"
-            AirQuality.MODERATE.value -> "1"
-            AirQuality.UNHEALTHY_FOR_SENSITIVE_GROUPS.value -> "2"
-            AirQuality.UNHEALTHY.value -> "3"
-            AirQuality.VERY_UNHEALTHY.value -> "4"
-            AirQuality.SEVERE.value -> "5"
-            else -> "unknown"
-        }
+        return argmax
     }
 }
