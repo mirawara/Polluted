@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "622481548258",
+    "project_id": "polluted-d7bac",
+    "storage_bucket": "polluted-d7bac.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622481548258:android:71353f9759ad0550a30fbb",
+        "android_client_info": {
+          "package_name": "it.unipi.dii.msss.polluted"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "622481548258-4l7g76i1rp227p37095eab4uv7810q3q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmOOtmylCtw-9IzZ7oYV05_gXvbWBp21k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "622481548258-4l7g76i1rp227p37095eab4uv7810q3q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
