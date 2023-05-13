@@ -26,7 +26,7 @@ class ClassificationActivity : AppCompatActivity() {
     //private val asset = baseContext.assets
     //private val classifier = Classifier(asset, mModelPath, classifierInputSize)
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    //@RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_classification)

@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace 'it.unipi.dii.msss.polluted'
-    compileSdk 33
+    compileSdk 26
 
     defaultConfig {
         applicationId "it.unipi.dii.msss.polluted"
@@ -24,14 +24,19 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+          sourceCompatibility JavaVersion.VERSION_1_8
+          targetCompatibility JavaVersion.VERSION_1_8
+    }
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = '1.8'
     }
     buildFeatures {
         viewBinding true
+
     }
 }
 
@@ -56,7 +61,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'org.tensorflow:tensorflow-lite:2.8.0'
-    implementation project(":aa")
+    implementation project(':opencv')
 
 /*
     implementation "androidx.camera:camera-core:1.1.0"
