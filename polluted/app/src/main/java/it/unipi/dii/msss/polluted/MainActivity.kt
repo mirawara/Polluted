@@ -11,6 +11,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import com.google.firebase.FirebaseApp
 import it.unipi.dii.msss.polluted.camera.CameraActivity
 import it.unipi.dii.msss.polluted.databinding.ActivityMainBinding
 

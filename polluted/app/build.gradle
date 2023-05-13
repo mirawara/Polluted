@@ -83,3 +83,5 @@ dependencies {
     implementation 'com.firebase:geofire-android-common:3.2.0'
 
 }
+
+apply plugin : 'com.google.gms.google-services'

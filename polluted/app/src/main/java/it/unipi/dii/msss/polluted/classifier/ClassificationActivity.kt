@@ -23,6 +23,7 @@ import com.firebase.geofire.GeoFireUtils
 import com.firebase.geofire.GeoLocation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -76,7 +77,7 @@ class ClassificationActivity : AppCompatActivity() {
             val result = classifier.recognizeImage(bitmap)
             Log.e("Result: ", result.toString())
 
-            sendPollInfo(this, this, result)
+            while (!sendPollInfo(this, this, result)) {}
         }
     }
 
@@ -91,7 +92,7 @@ class ClassificationActivity : AppCompatActivity() {
     }
 
     @Suppress("DEPRECATION")
-    private fun sendPollInfo(context: Context, activity: Activity, tag: Int): Any {
+    private fun sendPollInfo(context: Context, activity: Activity, tag: Int): Boolean {
         // Check if location permission is granted
         if (ActivityCompat.checkSelfPermission(
                 context,
@@ -120,7 +121,7 @@ class ClassificationActivity : AppCompatActivity() {
         }
 
 
-        //FirebaseApp.initializeApp(this) questo va messo nella main activity
+        FirebaseApp.initializeApp(this) //questo va messo nella main activity
         val db = FirebaseFirestore.getInstance()
 
 
@@ -142,9 +143,9 @@ class ClassificationActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e -> Log.w(TAG, "Error adding document", e) }
 
+        doAvg(location, 30.0)
 
-
-        return doAvg(location, 30.0)
+        return true
     }
 
 
@@ -201,7 +202,7 @@ class ClassificationActivity : AppCompatActivity() {
                 if (count != 0) {
                     avg = (acc / count).toDouble().roundToInt()
                     val text : TextView =findViewById(R.id.showResult)
-                    text.setText(avg)
+                    text.text = avg.toString()
                     
                 }
             }
