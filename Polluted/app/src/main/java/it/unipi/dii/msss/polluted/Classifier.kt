@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import org.opencv.android.OpenCVLoader
 import org.tensorflow.lite.Interpreter
 import java.io.FileInputStream
 import java.nio.ByteBuffer
@@ -17,6 +18,15 @@ import java.util.*
 import java.io.File
 import kotlin.math.pow
 
+import org.opencv.android.Utils
+import org.opencv.core.Core
+import org.opencv.core.CvType
+import org.opencv.core.Size
+import org.opencv.imgproc.Imgproc
+
+
+import org.opencv.core.Mat
+
 class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int) {
 
     private lateinit var INTERPRETER: Interpreter
@@ -27,6 +37,9 @@ class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int) 
 
     init {
         INTERPRETER = Interpreter(loadModelFile(assetManager, modelPath))
+        if (!OpenCVLoader.initDebug()) {
+            print("error")
+        }
     }
 
     private fun loadModelFile(assetManager: AssetManager, modelPath: String): MappedByteBuffer {
@@ -81,10 +94,45 @@ class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int) 
 
     }
 
+    private fun preprocessImage(image: Bitmap): Bitmap { // Converti l'immagine in spazio colore HSV
+        val hsvImage = Mat()
+        Utils.bitmapToMat(image, hsvImage)
+        Imgproc.cvtColor(hsvImage, hsvImage, Imgproc.COLOR_BGR2HSV)
+
+        // Estrai il canale H, il canale V e il dark channel
+        val hChannel = Mat()
+        val vChannel = Mat()
+        val darkChannel = Mat()
+        Core.extractChannel(hsvImage, hChannel, 0)
+        Core.extractChannel(hsvImage, vChannel, 2)
+        Imgproc.erode(vChannel, darkChannel, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(15.0, 15.0)))
+
+        // Scala di grigi dell'immagine originale
+        val grayImage = Mat()
+        Utils.bitmapToMat(image, grayImage)
+        Imgproc.cvtColor(grayImage, grayImage, Imgproc.COLOR_BGR2GRAY)
+
+        // Crea l'immagine combinata sovrapponendo i canali
+        val combinedImage = Mat()
+        val channels = ArrayList<Mat>()
+        channels.add(darkChannel)
+        channels.add(hChannel)
+        channels.add(vChannel)
+        channels.add(grayImage)
+        Core.merge(channels, combinedImage)
+
+        // Converti l'immagine di nuovo in formato Bitmap
+        val preprocessedBitmap = Bitmap.createBitmap(combinedImage.cols(), combinedImage.rows(), Bitmap.Config.ARGB_8888)
+
+        Utils.matToBitmap(combinedImage, preprocessedBitmap)
+        return preprocessedBitmap
+    }
+
     fun recognizeImage(bitmap: Bitmap) : Int {
 
         val scaledBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false)
-        val byteBuffer = convertBitmapToByteBuffer(scaledBitmap)
+        val processedBitmap = preprocessImage(scaledBitmap)
+        val byteBuffer = convertBitmapToByteBuffer(processedBitmap)
 
         val result = Array(1) { FloatArray(AirQuality.values().size) }
 

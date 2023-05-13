@@ -1,4 +1,4 @@
-import android.content.ContentValues
+/*import android.content.ContentValues
 import android.content.Intent
 import android.os.Build
 import android.provider.MediaStore
@@ -59,3 +59,4 @@ private fun takePhoto() {
         }
     )
 }
+*/
