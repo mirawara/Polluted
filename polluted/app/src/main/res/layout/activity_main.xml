@@ -8,9 +8,9 @@
 
     <ImageView
         android:id="@+id/imageView8"
-        android:layout_width="642dp"
-        android:layout_height="942dp"
-        android:alpha="0.3"
+        android:layout_width="669dp"
+        android:layout_height="978dp"
+        android:alpha="0.4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/appBarLayout"
         app:srcCompat="@drawable/immagine2" />
@@ -43,20 +43,20 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="318dp"
-        android:layout_height="136dp"
+        android:layout_width="308dp"
+        android:layout_height="162dp"
         android:layout_marginBottom="72dp"
         android:autoSizeTextType="uniform"
         android:fontFamily="sans-serif"
         android:gravity="left"
-        android:text="Take a picture to discover the pollution level in your area"
+        android:text="@string/intro"
         android:textColor="#4C4C4C"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.302"
+        app:layout_constraintHorizontal_bias="0.291"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textview_first"
-        app:layout_constraintVertical_bias="0.094" />
+        app:layout_constraintVertical_bias="0.2" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/takePhoto"
