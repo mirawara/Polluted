@@ -112,13 +112,14 @@ class ClassificationActivity : AppCompatActivity() {
         val geocoder = Geocoder(this, Locale.getDefault())
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        /*
         val addresses = geocoder.getFromLocation(location!!.latitude, location.longitude, 1)
         if (addresses != null) {
             if (addresses.isNotEmpty()) {
                 val cityName = addresses[0].locality
                 Toast.makeText(this, "City Name: $cityName", Toast.LENGTH_SHORT).show()
             }
-        }
+        }*/
 
 
         FirebaseApp.initializeApp(this) //questo va messo nella main activity
@@ -126,7 +127,7 @@ class ClassificationActivity : AppCompatActivity() {
 
 
         val hash =
-            GeoFireUtils.getGeoHashForLocation(GeoLocation(location.latitude, location.longitude))
+            GeoFireUtils.getGeoHashForLocation(GeoLocation(location!!.latitude, location.longitude))
 
         val geoPoint = GeoPoint(location.latitude, location.longitude)
         val photo = hashMapOf(
