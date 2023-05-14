@@ -1,26 +1,42 @@
 package it.unipi.dii.msss.polluted.classifier
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.location.Criteria
 import android.location.Geocoder
 import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
+import android.location.LocationRequest
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Looper
+import android.provider.Settings
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.firebase.geofire.GeoFireUtils
 import com.firebase.geofire.GeoLocation
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.CancellationToken
+import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
@@ -32,10 +48,13 @@ import com.google.firebase.firestore.QuerySnapshot
 import it.unipi.dii.msss.polluted.R
 import java.util.Date
 import java.util.Locale
+import java.util.function.Consumer
 import kotlin.math.roundToInt
+
 
 private const val REQUEST_LOCATION_PERMISSION = 1
 private const val TAG = "ClassificationActivity"
+private lateinit var fusedLocationClient: FusedLocationProviderClient
 
 class ClassificationActivity : AppCompatActivity() {
 
@@ -77,7 +96,7 @@ class ClassificationActivity : AppCompatActivity() {
             val result = classifier.recognizeImage(bitmap)
             Log.e("Result: ", result.toString())
 
-            while (!sendPollInfo(this, this, result)) {}
+            prova(this, this, result)
         }
     }
 
@@ -91,8 +110,12 @@ class ClassificationActivity : AppCompatActivity() {
         return Bitmap.createBitmap(bitmap, 0, 0, originalWidth, originalHeight, matrix, true)
     }
 
+
+
+    @RequiresApi(Build.VERSION_CODES.S)
     @Suppress("DEPRECATION")
-    private fun sendPollInfo(context: Context, activity: Activity, tag: Int): Boolean {
+    private fun prova(context: Context, activity: Activity, tag: Int): Boolean {
+
         // Check if location permission is granted
         if (ActivityCompat.checkSelfPermission(
                 context,
@@ -107,19 +130,58 @@ class ClassificationActivity : AppCompatActivity() {
             )
             return false
         }
+        val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
 
-        // Get the user's current location
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+            fusedLocationClient.getCurrentLocation(LocationRequest.QUALITY_HIGH_ACCURACY, object : CancellationToken() {
+                override fun onCanceledRequested(p0: OnTokenCanceledListener) = CancellationTokenSource().token
+
+                override fun isCancellationRequested() = false
+            })
+                .addOnSuccessListener { location: Location? ->
+                    if (location == null)
+                        Toast.makeText(this, "Cannot get location.", Toast.LENGTH_SHORT).show()
+                    else {
+                        sendPollInfo(context,activity,tag,location)
+                    }
+
+                }
+        } else {
+            val locationListener: LocationListener =
+                LocationListener { location -> sendPollInfo(context, activity, tag, location) }
+            val criteria = Criteria()
+            criteria.accuracy = Criteria.ACCURACY_COARSE
+            criteria.powerRequirement = Criteria.POWER_LOW
+            criteria.isAltitudeRequired = false
+            criteria.isBearingRequired = false
+            criteria.isSpeedRequired = false
+            criteria.isCostAllowed = true
+            criteria.horizontalAccuracy = Criteria.ACCURACY_HIGH
+            criteria.verticalAccuracy = Criteria.ACCURACY_HIGH
+
+            val looper: Looper? = null
+            locationManager.requestSingleUpdate(criteria, locationListener, looper);
+        }
+        return true
+    }
+
+    @Suppress("DEPRECATION")
+    private fun sendPollInfo(
+        context: Context,
+        activity: Activity,
+        tag: Int,
+        location: Location
+    ): Boolean {
+
         val geocoder = Geocoder(this, Locale.getDefault())
-        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-        /*
-        val addresses = geocoder.getFromLocation(location!!.latitude, location.longitude, 1)
+        val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
         if (addresses != null) {
             if (addresses.isNotEmpty()) {
                 val cityName = addresses[0].locality
-                Toast.makeText(this, "City Name: $cityName", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, "City Name: $cityName", Toast.LENGTH_SHORT).show()
             }
-        }*/
+        }
 
 
         FirebaseApp.initializeApp(this) //questo va messo nella main activity
@@ -202,10 +264,31 @@ class ClassificationActivity : AppCompatActivity() {
                 }
                 if (count != 0) {
                     avg = (acc / count).toDouble().roundToInt()
-                    val text : TextView =findViewById(R.id.showResult)
+                    val text: TextView = findViewById(R.id.showResult)
                     text.text = avg.toString()
-                    
+
                 }
             }
+    }
+
+
+    // Funzione per mostrare un dialogo che invita l'utente ad attivare il GPS
+    private fun showEnableGPSDialog(activity: Activity) {
+        val alertDialogBuilder = AlertDialog.Builder(activity)
+        alertDialogBuilder.apply {
+            setTitle("GPS off")
+            setMessage("GPS off, go to settings to activate it")
+            setPositiveButton("Settings") { dialog: DialogInterface, _: Int ->
+                val settingsIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                activity.startActivity(settingsIntent)
+                dialog.dismiss()
+            }
+            setNegativeButton("Cancel") { dialog: DialogInterface, _: Int ->
+                dialog.dismiss()
+            }
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 }
