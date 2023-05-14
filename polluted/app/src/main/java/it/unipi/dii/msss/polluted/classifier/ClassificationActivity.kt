@@ -53,7 +53,7 @@ class ClassificationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_classification)
 
         val asset = applicationContext.assets
-        val classifier = Classifier(asset, mModelPath, classifierInputSize)
+        val classifier = Classifier(asset, mModelPath, classifierInputSize, AirQuality::class.java, true)
 
         //val bitmapParcelable = intent.getParcelableExtra<BitmapParcelable>("bitmap")
         //bitmap = scaleImage(intent.getParcelableExtra("bitmap", clazz))
