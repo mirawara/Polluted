@@ -4,6 +4,10 @@ import android.Manifest
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -17,7 +21,10 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import it.unipi.dii.msss.polluted.classifier.AirQuality
 import it.unipi.dii.msss.polluted.classifier.ClassificationActivity
+import it.unipi.dii.msss.polluted.classifier.Classifier
+import it.unipi.dii.msss.polluted.classifier.ImageComposition
 import it.unipi.dii.msss.polluted.databinding.ActivityCameraBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -31,8 +38,17 @@ class CameraActivity : AppCompatActivity() {
 
     private lateinit var cameraExecutor: ExecutorService
 
+    private val mInputSize = 224
+    private val classifierInputSize = 224
+    private val mModelPath = "image_correctness.tflite"
+    //private var classifier: Classifier? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //val asset = applicationContext.assets
+        //val classifier = Classifier(asset, mModelPath, classifierInputSize, ImageComposition::class.java, false)
+
         viewBinding = ActivityCameraBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
@@ -53,6 +69,10 @@ class CameraActivity : AppCompatActivity() {
 
 
     private fun takePhoto() {
+
+        val asset = applicationContext.assets
+        val classifier = Classifier(asset, mModelPath, classifierInputSize, ImageComposition::class.java, false)
+
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
 
@@ -90,14 +110,38 @@ class CameraActivity : AppCompatActivity() {
                     val msg = "Photo capture succeeded: ${output.savedUri}"
                     Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
-                    val i = Intent(this@CameraActivity, ClassificationActivity::class.java)
-                    Log.e("savedUri: ", output.savedUri.toString())
-                    i.putExtra("filename", output.savedUri.toString())
-                    startActivity(i)
+
+                    val bitmap = scaleImage(
+                        BitmapFactory.decodeStream(
+                            applicationContext.contentResolver.openInputStream(Uri.parse(output.savedUri.toString()))
+                        )
+                    )
+
+                    val result = classifier.recognizeImage(bitmap)
+                    Log.e("Result:", result.toString())
+                    if(result== 0) {
+                        val i = Intent(this@CameraActivity, ClassificationActivity::class.java)
+                        Log.e("savedUri: ", output.savedUri.toString())
+                        i.putExtra("filename", output.savedUri.toString())
+                        startActivity(i)
+                    }else{
+                        Toast.makeText(baseContext, "Photo not valid, it has to contain sky", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         )
     }
+
+    private fun scaleImage(bitmap: Bitmap?): Bitmap {
+        val originalWidth = bitmap!!.width
+        val originalHeight = bitmap.height
+        val scaleWidth = mInputSize.toFloat() / originalWidth
+        val scaleHeight = mInputSize.toFloat() / originalHeight
+        val matrix = Matrix()
+        matrix.postScale(scaleWidth, scaleHeight)
+        return Bitmap.createBitmap(bitmap, 0, 0, originalWidth, originalHeight, matrix, true)
+    }
+
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 

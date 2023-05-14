@@ -19,13 +19,16 @@ import org.opencv.imgproc.Imgproc
 
 import org.opencv.core.Mat
 
-class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int) {
+class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int,
+                 labelClass: Class<out Enum<*>>, needPreprocessing: Boolean) {
 
-    private lateinit var INTERPRETER: Interpreter
+    private var INTERPRETER: Interpreter
     private val INPUT_SIZE: Int = inputSize
     private val PIXEL_SIZE: Int = 3
     private val IMAGE_MEAN = 0
     private val IMAGE_STD = 255.0f
+    private val LABEL_CLASS : Class<out Enum<*>> = labelClass
+    private val needPreprocessing: Boolean = needPreprocessing
 
     init {
         INTERPRETER = Interpreter(loadModelFile(assetManager, modelPath))
@@ -122,11 +125,14 @@ class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int) 
 
     fun recognizeImage(bitmap: Bitmap) : Int {
 
-        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false)
-        val processedBitmap = preprocessImage(scaledBitmap)
-        val byteBuffer = convertBitmapToByteBuffer(processedBitmap)
+        var scaledBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false)
 
-        val result = Array(1) { FloatArray(AirQuality.values().size) }
+        if (needPreprocessing) {
+            scaledBitmap = preprocessImage(scaledBitmap)
+        }
+        val byteBuffer = convertBitmapToByteBuffer(scaledBitmap)
+
+        val result = Array(1) { FloatArray(LABEL_CLASS.enumConstants.size) }
 
         INTERPRETER.run(byteBuffer, result)
 
