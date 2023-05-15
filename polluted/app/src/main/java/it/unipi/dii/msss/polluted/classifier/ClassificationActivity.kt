@@ -1,10 +1,8 @@
 package it.unipi.dii.msss.polluted.classifier
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -26,8 +24,6 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.firebase.geofire.GeoFireUtils
@@ -48,7 +44,6 @@ import com.google.firebase.firestore.QuerySnapshot
 import it.unipi.dii.msss.polluted.R
 import java.util.Date
 import java.util.Locale
-import java.util.function.Consumer
 import kotlin.math.roundToInt
 
 
@@ -57,6 +52,7 @@ private const val TAG = "ClassificationActivity"
 private lateinit var fusedLocationClient: FusedLocationProviderClient
 
 class ClassificationActivity : AppCompatActivity() {
+    private var intent1: Intent? = null
 
     lateinit var bitmap: Bitmap
     private val mInputSize = 224
@@ -112,7 +108,6 @@ class ClassificationActivity : AppCompatActivity() {
 
 
 
-    @RequiresApi(Build.VERSION_CODES.S)
     @Suppress("DEPRECATION")
     private fun prova(context: Context, activity: Activity, tag: Int): Boolean {
 
@@ -130,7 +125,16 @@ class ClassificationActivity : AppCompatActivity() {
             )
             return false
         }
+
+
         val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            Toast.makeText(
+                this,
+                "Activate GPS first",
+                Toast.LENGTH_SHORT).show()
+            return false
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -271,24 +275,4 @@ class ClassificationActivity : AppCompatActivity() {
             }
     }
 
-
-    // Funzione per mostrare un dialogo che invita l'utente ad attivare il GPS
-    private fun showEnableGPSDialog(activity: Activity) {
-        val alertDialogBuilder = AlertDialog.Builder(activity)
-        alertDialogBuilder.apply {
-            setTitle("GPS off")
-            setMessage("GPS off, go to settings to activate it")
-            setPositiveButton("Settings") { dialog: DialogInterface, _: Int ->
-                val settingsIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                activity.startActivity(settingsIntent)
-                dialog.dismiss()
-            }
-            setNegativeButton("Cancel") { dialog: DialogInterface, _: Int ->
-                dialog.dismiss()
-            }
-        }
-
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
-    }
 }
