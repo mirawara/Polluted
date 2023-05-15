@@ -43,7 +43,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.QuerySnapshot
 import it.unipi.dii.msss.polluted.R
-import java.io.File
 import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -64,6 +63,7 @@ class ClassificationActivity : AppCompatActivity() {
     //@RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_classification)
 
         val asset = applicationContext.assets
