@@ -33,3 +33,6 @@ polluted/google-services.json
 
 # Android Profiling
 polluted/*.hprof
+
+#opencv
+polluted/opencv/build/

@@ -291,5 +291,3 @@ class ClassificationActivity : AppCompatActivity() {
                 }
             }
     }
-
-}
