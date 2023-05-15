@@ -54,7 +54,7 @@ private lateinit var fusedLocationClient: FusedLocationProviderClient
 
 class ClassificationActivity : AppCompatActivity() {
 
-    private val mInputSize = 224
+    private val mInputSize = 1080
     private val classifierInputSize = 224
     private val mModelPath = "aq_classifier.tflite"
     //private val asset = baseContext.assets
@@ -69,28 +69,17 @@ class ClassificationActivity : AppCompatActivity() {
         val asset = applicationContext.assets
         val classifier = Classifier(asset, mModelPath, classifierInputSize, AirQuality::class.java, true)
 
-        //val bitmapParcelable = intent.getParcelableExtra<BitmapParcelable>("bitmap")
-        //bitmap = scaleImage(intent.getParcelableExtra("bitmap", clazz))
-
         val imagePath = intent.getStringExtra("filename")!!
         val rotateImage = getCameraPhotoOrientation(
             this, Uri.parse(imagePath),
             imagePath
         )
 
-
-
-        //val file = File(imagePath)
-        /*val bitmap = scaleImage(
-            BitmapFactory.decodeStream(
-                applicationContext.contentResolver.openInputStream(Uri.parse(imagePath))
-            )
-        )*/
         val bitmap = BitmapFactory.decodeStream(applicationContext.contentResolver.openInputStream(Uri.parse(imagePath)))
 
         val imageview : ImageView  = findViewById(R.id.imageView4)
         imageview.rotation = rotateImage.toFloat()
-        imageview.setImageBitmap(bitmap)
+        imageview.setImageBitmap(scaleImage(bitmap))
 
         val getAQButton : Button = findViewById(R.id.button3)
 
