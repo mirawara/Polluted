@@ -1,6 +1,7 @@
 package it.unipi.dii.msss.polluted.classifier
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
@@ -172,14 +173,14 @@ class ClassificationActivity : AppCompatActivity() {
         location: Location
     ): Boolean {
 
+        var cityName = ""
+
         val geocoder = Geocoder(this, Locale.getDefault())
-        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-        val addresses = geocoder.getFromLocation(location!!.latitude, location.longitude, 1)
+        val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
         if (addresses != null) {
             if (addresses.isNotEmpty()) {
-                val cityName = addresses[0].locality
-                Toast.makeText(this, "City Name: $cityName", Toast.LENGTH_SHORT).show()
+                cityName = addresses[0].locality
+                //Toast.makeText(this, "City Name: $cityName", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -189,7 +190,7 @@ class ClassificationActivity : AppCompatActivity() {
 
 
         val hash =
-            GeoFireUtils.getGeoHashForLocation(GeoLocation(location!!.latitude, location.longitude))
+            GeoFireUtils.getGeoHashForLocation(GeoLocation(location.latitude, location.longitude))
 
         val geoPoint = GeoPoint(location.latitude, location.longitude)
         val photo = hashMapOf(
@@ -206,13 +207,14 @@ class ClassificationActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e -> Log.w(TAG, "Error adding document", e) }
 
-        doAvg(location, 30.0, cityName)
+        doAvg(location, 30.0,cityName)
 
         return true
     }
 
 
-    private fun doAvg(location: Location, radiusInKm: Double, cityName: String?) {
+    @SuppressLint("SetTextI18n")
+    private fun doAvg(location: Location, radiusInKm: Double, cityName: String) {
         val db = FirebaseFirestore.getInstance()
         val center = GeoLocation(location.latitude, location.longitude)
         val radiusInM = radiusInKm * 1000.0
@@ -273,16 +275,19 @@ class ClassificationActivity : AppCompatActivity() {
                     val value = AirQuality from(avg)
                     quality.text = "Air quality is $value"
 
+
+
                     //val legenda : TextView =findViewById(R.id.legenda)
                     //legenda.visibility = View.VISIBLE
 
-                    if(cityName!=null){
-                        val location : TextView =findViewById(R.id.location)
-                        val locationIcon : ImageView =findViewById(R.id.locationIcon)
-                        location.visibility = View.VISIBLE
-                        locationIcon.visibility = View.VISIBLE
-                        location.text = cityName
-                    }
+
+                    val location : TextView =findViewById(R.id.location)
+                    val locationIcon : ImageView =findViewById(R.id.locationIcon)
+                    location.visibility = View.VISIBLE
+                    locationIcon.visibility = View.VISIBLE
+                    location.text = cityName
+                }
+
                 }
             }
     }

@@ -22,3 +22,19 @@ generate_cxx_metadata
 generate_cxx_metadata completed in 143ms
 >>>>>>> marta
 
+# C/C++ build system timings
+generate_cxx_metadata
+  [gap of 12ms]
+  create-invalidation-state 32ms
+  [gap of 16ms]
+generate_cxx_metadata completed in 60ms
+
+# C/C++ build system timings
+generate_cxx_metadata
+  [gap of 14ms]
+  create-invalidation-state 44ms
+  [gap of 19ms]
+generate_cxx_metadata completed in 77ms
+
+# C/C++ build system timings
+
