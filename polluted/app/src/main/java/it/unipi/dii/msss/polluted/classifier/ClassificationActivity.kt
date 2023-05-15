@@ -18,6 +18,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -172,11 +173,13 @@ class ClassificationActivity : AppCompatActivity() {
     ): Boolean {
 
         val geocoder = Geocoder(this, Locale.getDefault())
-        val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        val addresses = geocoder.getFromLocation(location!!.latitude, location.longitude, 1)
         if (addresses != null) {
             if (addresses.isNotEmpty()) {
                 val cityName = addresses[0].locality
-                //Toast.makeText(this, "City Name: $cityName", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "City Name: $cityName", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -186,7 +189,7 @@ class ClassificationActivity : AppCompatActivity() {
 
 
         val hash =
-            GeoFireUtils.getGeoHashForLocation(GeoLocation(location.latitude, location.longitude))
+            GeoFireUtils.getGeoHashForLocation(GeoLocation(location!!.latitude, location.longitude))
 
         val geoPoint = GeoPoint(location.latitude, location.longitude)
         val photo = hashMapOf(
@@ -203,13 +206,13 @@ class ClassificationActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e -> Log.w(TAG, "Error adding document", e) }
 
-        doAvg(location, 30.0)
+        doAvg(location, 30.0, cityName)
 
         return true
     }
 
 
-    private fun doAvg(location: Location, radiusInKm: Double) {
+    private fun doAvg(location: Location, radiusInKm: Double, cityName: String?) {
         val db = FirebaseFirestore.getInstance()
         val center = GeoLocation(location.latitude, location.longitude)
         val radiusInM = radiusInKm * 1000.0
@@ -261,9 +264,25 @@ class ClassificationActivity : AppCompatActivity() {
                 }
                 if (count != 0) {
                     avg = (acc / count).toDouble().roundToInt()
-                    val text: TextView = findViewById(R.id.showResult)
-                    text.text = avg.toString()
+                    val qualityIcon : ImageView =findViewById(R.id.qualityIcon)
+                    val quality : TextView =findViewById(R.id.quality)
+                    //text.text = avg.toString()
+                    quality.visibility = View.VISIBLE
+                    qualityIcon.visibility = View.VISIBLE
+                    //quality.text = "Air quality level is $avg"
+                    val value = AirQuality from(avg)
+                    quality.text = "Air quality is $value"
 
+                    //val legenda : TextView =findViewById(R.id.legenda)
+                    //legenda.visibility = View.VISIBLE
+
+                    if(cityName!=null){
+                        val location : TextView =findViewById(R.id.location)
+                        val locationIcon : ImageView =findViewById(R.id.locationIcon)
+                        location.visibility = View.VISIBLE
+                        locationIcon.visibility = View.VISIBLE
+                        location.text = cityName
+                    }
                 }
             }
     }

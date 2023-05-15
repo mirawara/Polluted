@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <ImageView
+        android:id="@+id/imageView8"
+        android:layout_width="669dp"
+        android:layout_height="978dp"
+        android:alpha="0.4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/appBarLayout"
+        app:srcCompat="@drawable/immagine2" />
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
@@ -18,49 +27,44 @@
 
     <TextView
         android:id="@+id/textview_first"
-        android:layout_width="134dp"
-        android:layout_height="49dp"
+        android:layout_width="268dp"
+        android:layout_height="74dp"
         android:layout_marginTop="80dp"
         android:autoSizeTextType="uniform"
+        android:fontFamily="sans-serif-black"
         android:text="@string/app_name"
+        android:textColor="#232323"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.213"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.214" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/logo_prova"
-        app:layout_constraintBottom_toTopOf="@+id/textview_first"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-        app:layout_constraintVertical_bias="0.686" />
+        app:layout_constraintVertical_bias="0.455" />
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="321dp"
-        android:layout_height="63dp"
+        android:layout_width="308dp"
+        android:layout_height="162dp"
         android:layout_marginBottom="72dp"
         android:autoSizeTextType="uniform"
-        android:gravity="center"
-        android:text="Take a picture to discover the pollution level in your area"
+        android:fontFamily="sans-serif"
+        android:gravity="left"
+        android:text="@string/intro"
+        android:textColor="#4C4C4C"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.291"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textview_first"
-        app:layout_constraintVertical_bias="0.353" />
+        app:layout_constraintVertical_bias="0.2" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/takePhoto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="44dp"
+        app:backgroundTint="@color/dark_green"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.929"
@@ -71,7 +75,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/light_green"
         app:layout_constraintTop_toTopOf="@+id/appBarLayout"
         app:popupTheme="@style/Theme.Polluted.PopupOverlay"
         tools:layout_editor_absoluteX="-16dp" />
