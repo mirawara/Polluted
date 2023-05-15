@@ -3,7 +3,6 @@ package it.unipi.dii.msss.polluted.classifier
 import android.Manifest
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -18,7 +17,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
-import android.provider.Settings
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
@@ -52,13 +50,10 @@ private const val TAG = "ClassificationActivity"
 private lateinit var fusedLocationClient: FusedLocationProviderClient
 
 class ClassificationActivity : AppCompatActivity() {
-    private var intent1: Intent? = null
 
-    lateinit var bitmap: Bitmap
     private val mInputSize = 224
     private val classifierInputSize = 224
     private val mModelPath = "trained.tflite"
-    private val mLabelPath = "labels.txt"
     //private val asset = baseContext.assets
     //private val classifier = Classifier(asset, mModelPath, classifierInputSize)
 
@@ -92,7 +87,7 @@ class ClassificationActivity : AppCompatActivity() {
             val result = classifier.recognizeImage(bitmap)
             Log.e("Result: ", result.toString())
 
-            prova(this, this, result)
+            start(this, this, result)
         }
     }
 
@@ -107,9 +102,8 @@ class ClassificationActivity : AppCompatActivity() {
     }
 
 
-
     @Suppress("DEPRECATION")
-    private fun prova(context: Context, activity: Activity, tag: Int): Boolean {
+    private fun start(context: Context, activity: Activity, tag: Int): Boolean {
 
         // Check if location permission is granted
         if (ActivityCompat.checkSelfPermission(
@@ -147,13 +141,13 @@ class ClassificationActivity : AppCompatActivity() {
                     if (location == null)
                         Toast.makeText(this, "Cannot get location.", Toast.LENGTH_SHORT).show()
                     else {
-                        sendPollInfo(context,activity,tag,location)
+                        sendPollInfo(tag, location)
                     }
 
                 }
         } else {
-            val locationListener: LocationListener =
-                LocationListener { location -> sendPollInfo(context, activity, tag, location) }
+            val locationListener =
+                LocationListener { location -> sendPollInfo(tag, location) }
             val criteria = Criteria()
             criteria.accuracy = Criteria.ACCURACY_COARSE
             criteria.powerRequirement = Criteria.POWER_LOW
@@ -165,15 +159,13 @@ class ClassificationActivity : AppCompatActivity() {
             criteria.verticalAccuracy = Criteria.ACCURACY_HIGH
 
             val looper: Looper? = null
-            locationManager.requestSingleUpdate(criteria, locationListener, looper);
+            locationManager.requestSingleUpdate(criteria, locationListener, looper)
         }
         return true
     }
 
     @Suppress("DEPRECATION")
     private fun sendPollInfo(
-        context: Context,
-        activity: Activity,
         tag: Int,
         location: Location
     ): Boolean {
@@ -193,7 +185,7 @@ class ClassificationActivity : AppCompatActivity() {
 
 
         val hash =
-            GeoFireUtils.getGeoHashForLocation(GeoLocation(location!!.latitude, location.longitude))
+            GeoFireUtils.getGeoHashForLocation(GeoLocation(location.latitude, location.longitude))
 
         val geoPoint = GeoPoint(location.latitude, location.longitude)
         val photo = hashMapOf(
@@ -258,7 +250,7 @@ class ClassificationActivity : AppCompatActivity() {
                 var count = 0
                 var acc = 0
                 val now = Date()
-                var avg = 0
+                val avg: Int
                 val oneDayAgo = Date(now.time - (24 * 60 * 60 * 1000))
                 for (doc in matchingDocs) {
                     if (doc.getTimestamp("timestamp")!! > Timestamp(oneDayAgo)) {
