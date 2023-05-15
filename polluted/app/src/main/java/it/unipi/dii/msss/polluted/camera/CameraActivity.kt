@@ -108,7 +108,7 @@ class CameraActivity : AppCompatActivity() {
                 override fun
                         onImageSaved(output: ImageCapture.OutputFileResults){
                     val msg = "Photo capture succeeded: ${output.savedUri}"
-                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
 
                     val bitmap = scaleImage(
@@ -117,8 +117,9 @@ class CameraActivity : AppCompatActivity() {
                         )
                     )
 
-                    val result = classifier.recognizeImage(bitmap)
+                    var result = classifier.recognizeImage(bitmap)
                     Log.e("Result:", result.toString())
+                    result=0
                     if(result== 0) {
                         val i = Intent(this@CameraActivity, ClassificationActivity::class.java)
                         Log.e("savedUri: ", output.savedUri.toString())

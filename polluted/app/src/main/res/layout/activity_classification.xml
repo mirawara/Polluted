@@ -8,12 +8,14 @@
 
     <ImageView
         android:id="@+id/imageView4"
-        android:layout_width="411dp"
-        android:layout_height="411dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/button3"
@@ -30,12 +32,12 @@
         android:id="@+id/locationIcon"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="104dp"
         android:visibility="invisible"
         app:layout_constraintEnd_toStartOf="@+id/location"
         app:layout_constraintHorizontal_bias="0.793"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button3"
+        app:layout_constraintTop_toBottomOf="@+id/imageView4"
         app:srcCompat="@drawable/location_foreground" />
 
     <TextView
@@ -44,7 +46,7 @@
         android:layout_height="35dp"
         android:layout_marginTop="104dp"
         android:gravity="left"
-        android:textSize="24sp"
+        android:autoSizeTextType="uniform"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.68"
@@ -68,15 +70,15 @@
         android:id="@+id/quality"
         android:layout_width="267dp"
         android:layout_height="35dp"
+        android:autoSizeTextType="uniform"
         android:gravity="left"
-        android:textSize="24sp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.68"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/location"
-        app:layout_constraintVertical_bias="0.184" />
+        app:layout_constraintVertical_bias="0.136" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

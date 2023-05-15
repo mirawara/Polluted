@@ -14,6 +14,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.location.LocationRequest
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -42,6 +43,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.QuerySnapshot
 import it.unipi.dii.msss.polluted.R
+import java.io.File
 import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -70,15 +72,24 @@ class ClassificationActivity : AppCompatActivity() {
         //val bitmapParcelable = intent.getParcelableExtra<BitmapParcelable>("bitmap")
         //bitmap = scaleImage(intent.getParcelableExtra("bitmap", clazz))
 
-        val imagePath = intent.getStringExtra("filename")
+        val imagePath = intent.getStringExtra("filename")!!
+        val rotateImage = getCameraPhotoOrientation(
+            this, Uri.parse(imagePath),
+            imagePath
+        )
+
+
+
         //val file = File(imagePath)
-        val bitmap = scaleImage(
+        /*val bitmap = scaleImage(
             BitmapFactory.decodeStream(
                 applicationContext.contentResolver.openInputStream(Uri.parse(imagePath))
             )
-        )
+        )*/
+        val bitmap = BitmapFactory.decodeStream(applicationContext.contentResolver.openInputStream(Uri.parse(imagePath)))
 
         val imageview : ImageView  = findViewById(R.id.imageView4)
+        imageview.rotation = rotateImage.toFloat()
         imageview.setImageBitmap(bitmap)
 
         val getAQButton : Button = findViewById(R.id.button3)
@@ -88,8 +99,8 @@ class ClassificationActivity : AppCompatActivity() {
             //classify
             val result = classifier.recognizeImage(bitmap)
             Log.e("Result: ", result.toString())
-
             start(this, this, result)
+            getAQButton.visibility=View.GONE
         }
     }
 
@@ -290,4 +301,35 @@ class ClassificationActivity : AppCompatActivity() {
 
                 }
             }
+    fun getCameraPhotoOrientation(
+        context: Context, imageUri: Uri?,
+        imagePath: String
+    ): Int {
+        var rotate = 0
+        try {
+            context.contentResolver.notifyChange(imageUri!!, null)
+            val exif = applicationContext.contentResolver.openInputStream(Uri.parse(imagePath))?.let {
+                ExifInterface(
+                    it
+                )
+            }
+            val orientation = exif!!.getAttributeInt(
+                ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL
+            )
+            when (orientation) {
+                ExifInterface.ORIENTATION_ROTATE_270 -> rotate = 270
+                ExifInterface.ORIENTATION_ROTATE_180 -> rotate = 180
+                ExifInterface.ORIENTATION_ROTATE_90 -> rotate = 90
+            }
+            Log.i("RotateImage", "Exif orientation: $orientation")
+            Log.i("RotateImage", "Rotate value: $rotate")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return rotate
     }
+
+
+
+}
