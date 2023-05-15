@@ -221,10 +221,12 @@ class ClassificationActivity : AppCompatActivity() {
                     //text.text = avg.toString()
                     quality.visibility = View.VISIBLE
                     qualityIcon.visibility = View.VISIBLE
-                    quality.text = "Air quality level is $avg"
+                    //quality.text = "Air quality level is $avg"
+                    val value = AirQuality from(avg)
+                    quality.text = "Air quality is $value"
 
-                    val legenda : TextView =findViewById(R.id.legenda)
-                    legenda.visibility = View.VISIBLE
+                    //val legenda : TextView =findViewById(R.id.legenda)
+                    //legenda.visibility = View.VISIBLE
 
                     if(cityName!=null){
                         val location : TextView =findViewById(R.id.location)
