@@ -1,2 +1,0 @@
-ninja: Entering directory `/home/lorenzo/AndroidStudioProjects/Polluted/polluted/opencv/.cxx/Debug/5c4z1s5t/x86'
-ninja: no work to do.
