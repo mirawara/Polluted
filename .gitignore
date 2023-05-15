@@ -1,6 +1,7 @@
 # Gradle files
 polluted/.gradle/
 polluted/build/
+polluted/.idea
 .idea
 
 # Local configuration file (sdk path, etc)
