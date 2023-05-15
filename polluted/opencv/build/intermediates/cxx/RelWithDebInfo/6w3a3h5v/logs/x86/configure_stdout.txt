@@ -12,4 +12,4 @@
 -- Detecting CXX compile features - done
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/lorenzo/AndroidStudioProjects/polluted/opencv/.cxx/RelWithDebInfo/6w3a3h5v/x86
+-- Build files have been written to: /home/lorenzo/AndroidStudioProjects/Polluted/polluted/opencv/.cxx/RelWithDebInfo/6w3a3h5v/x86

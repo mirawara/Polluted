@@ -53,7 +53,7 @@ class ClassificationActivity : AppCompatActivity() {
 
     private val mInputSize = 224
     private val classifierInputSize = 224
-    private val mModelPath = "trained.tflite"
+    private val mModelPath = "aq_classifier.tflite"
     //private val asset = baseContext.assets
     //private val classifier = Classifier(asset, mModelPath, classifierInputSize)
 
@@ -117,6 +117,7 @@ class ClassificationActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 REQUEST_LOCATION_PERMISSION
             )
+            Toast.makeText(this, "Click the button again", Toast.LENGTH_SHORT).show()
             return false
         }
 

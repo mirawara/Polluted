@@ -1,5 +1,5 @@
 /home/lorenzo/Android/Sdk/cmake/3.22.1/bin/cmake \
-  -H/home/lorenzo/AndroidStudioProjects/polluted/opencv/libcxx_helper \
+  -H/home/lorenzo/AndroidStudioProjects/Polluted/polluted/opencv/libcxx_helper \
   -DCMAKE_SYSTEM_NAME=Android \
   -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
   -DCMAKE_SYSTEM_VERSION=21 \
@@ -10,9 +10,9 @@
   -DCMAKE_ANDROID_NDK=/home/lorenzo/Android/Sdk/ndk/25.1.8937393 \
   -DCMAKE_TOOLCHAIN_FILE=/home/lorenzo/Android/Sdk/ndk/25.1.8937393/build/cmake/android.toolchain.cmake \
   -DCMAKE_MAKE_PROGRAM=/home/lorenzo/Android/Sdk/cmake/3.22.1/bin/ninja \
-  -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/home/lorenzo/AndroidStudioProjects/polluted/opencv/build/intermediates/cxx/RelWithDebInfo/6w3a3h5v/obj/x86 \
-  -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/home/lorenzo/AndroidStudioProjects/polluted/opencv/build/intermediates/cxx/RelWithDebInfo/6w3a3h5v/obj/x86 \
+  -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/home/lorenzo/AndroidStudioProjects/Polluted/polluted/opencv/build/intermediates/cxx/RelWithDebInfo/6w3a3h5v/obj/x86 \
+  -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/home/lorenzo/AndroidStudioProjects/Polluted/polluted/opencv/build/intermediates/cxx/RelWithDebInfo/6w3a3h5v/obj/x86 \
   -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-  -B/home/lorenzo/AndroidStudioProjects/polluted/opencv/.cxx/RelWithDebInfo/6w3a3h5v/x86 \
+  -B/home/lorenzo/AndroidStudioProjects/Polluted/polluted/opencv/.cxx/RelWithDebInfo/6w3a3h5v/x86 \
   -GNinja \
   -DANDROID_STL=c++_shared
