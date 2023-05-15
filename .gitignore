@@ -35,4 +35,4 @@ polluted/google-services.json
 polluted/*.hprof
 
 #opencv
-#polluted/opencv/build/
+polluted/opencv/build/
