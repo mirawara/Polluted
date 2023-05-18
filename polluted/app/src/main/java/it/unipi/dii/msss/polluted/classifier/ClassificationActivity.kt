@@ -88,8 +88,9 @@ class ClassificationActivity : AppCompatActivity() {
             //classify
             val result = classifier.recognizeImage(bitmap)
             Log.e("Result: ", result.toString())
-            start(this, this, result)
-            getAQButton.visibility=View.GONE
+            val success = start(this, this, result)
+            if (success)
+                getAQButton.visibility=View.GONE
         }
     }
 

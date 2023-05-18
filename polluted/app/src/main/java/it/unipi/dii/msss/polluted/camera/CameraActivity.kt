@@ -119,7 +119,7 @@ class CameraActivity : AppCompatActivity() {
 
                     var result = classifier.recognizeImage(bitmap)
                     Log.e("Result:", result.toString())
-                    result=0
+                   // result=0
                     if(result== 0) {
                         val i = Intent(this@CameraActivity, ClassificationActivity::class.java)
                         Log.e("savedUri: ", output.savedUri.toString())
