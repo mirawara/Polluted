@@ -19,6 +19,9 @@ import org.opencv.imgproc.Imgproc
 
 import org.opencv.core.Mat
 
+/*This class is responsible for managing all the operations related to a Tensorflow Lite
+classifier (loading the model, converting inputs in the right formats, preprocessing them, running
+the model*/
 class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int,
                  labelClass: Class<out Enum<*>>, needPreprocessing: Boolean) {
 
@@ -37,6 +40,7 @@ class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int,
         }
     }
 
+    /*Loads the model, saved in tflite format, from the assets folder*/
     private fun loadModelFile(assetManager: AssetManager, modelPath: String): MappedByteBuffer {
         val fileDescriptor = assetManager.openFd(modelPath)
         val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
@@ -46,6 +50,7 @@ class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int,
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
     }
 
+    /*Converts an input image, represented as a bitmap, in the required format for the model*/
     private fun convertBitmapToByteBuffer(bitmap: Bitmap): ByteBuffer {
         val byteBuffer = ByteBuffer.allocateDirect(4*INPUT_SIZE * INPUT_SIZE * PIXEL_SIZE)
         byteBuffer.order(ByteOrder.nativeOrder())
@@ -65,36 +70,15 @@ class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int,
         return byteBuffer
     }
 
-    private fun convertBitmapToByteBuffer1(bitmap: Bitmap): ByteBuffer {
-        val byteBuffer = ByteBuffer.allocateDirect(160 * 160 * 3)
-        byteBuffer.order(ByteOrder.nativeOrder())
-        val intValues = IntArray(bitmap.width * bitmap.height)
-
-        bitmap.getPixels(intValues, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
-        //var pixel = 0
-        for (i in 0 until 160) {
-            for (j in 0 until 160) {
-                //pixel = bitmap.getPixel(i,j)
-                val index = j * bitmap.width / 160 + i * bitmap.height / 160 * bitmap.width
-                val value = intValues[index]
-                //val value = pixel
-                byteBuffer.put(((value shr 16) and 0xFF - 128).toByte())
-                byteBuffer.put(((value shr 8) and 0xFF - 128).toByte())
-                byteBuffer.put((value and 0xFF - 128).toByte())
-            }
-        }
-        byteBuffer.rewind()
-
-        return byteBuffer
-
-    }
-
+    /*Performs image preprocessing on the input bitmap
+    Extracts H, V channels, dark channel image, grey scale image, and merge them to obtain the
+    feature map*/
     private fun preprocessImage(image: Bitmap): Bitmap { // Converti l'immagine in spazio colore HSV
         val hsvImage = Mat()
         Utils.bitmapToMat(image, hsvImage)
         Imgproc.cvtColor(hsvImage, hsvImage, Imgproc.COLOR_BGR2HSV)
 
-        // Estrai il canale H, il canale V e il dark channel
+        // Extracts channel H, channel V and dark channel
         val hChannel = Mat()
         val vChannel = Mat()
         val darkChannel = Mat()
@@ -102,12 +86,12 @@ class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int,
         Core.extractChannel(hsvImage, vChannel, 2)
         Imgproc.erode(vChannel, darkChannel, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(15.0, 15.0)))
 
-        // Scala di grigi dell'immagine originale
+        // Extracts gray scale image
         val grayImage = Mat()
         Utils.bitmapToMat(image, grayImage)
         Imgproc.cvtColor(grayImage, grayImage, Imgproc.COLOR_BGR2GRAY)
 
-        // Crea l'immagine combinata sovrapponendo i canali
+        // Merges the four channels to obtain the feature map
         val combinedImage = Mat()
         val channels = ArrayList<Mat>()
         channels.add(darkChannel)
@@ -116,13 +100,16 @@ class Classifier(assetManager: AssetManager, modelPath: String, inputSize: Int,
         channels.add(grayImage)
         Core.merge(channels, combinedImage)
 
-        // Converti l'immagine di nuovo in formato Bitmap
+        // Converts preprocessed image in bitmap format
         val preprocessedBitmap = Bitmap.createBitmap(combinedImage.cols(), combinedImage.rows(), Bitmap.Config.ARGB_8888)
 
         Utils.matToBitmap(combinedImage, preprocessedBitmap)
         return preprocessedBitmap
     }
 
+    /*Takes an image as input, resizes it, and gives it as input of the loaded classifier,
+    possibily before the initial preprocessing
+    Returns the classification result as an Integer label*/
     fun recognizeImage(bitmap: Bitmap) : Int {
 
         var scaledBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false)
