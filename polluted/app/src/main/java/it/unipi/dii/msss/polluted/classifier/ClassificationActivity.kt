@@ -105,6 +105,7 @@ class ClassificationActivity : AppCompatActivity() {
     }
 
 
+    //Takes the position based on the sdk of the device asking the permission
     @Suppress("DEPRECATION")
     private fun start(context: Context, activity: Activity, tag: Int): Boolean {
 
@@ -152,6 +153,8 @@ class ClassificationActivity : AppCompatActivity() {
         } else {
             val locationListener =
                 LocationListener { location -> sendPollInfo(tag, location) }
+
+            //Configuration in order to consume less power as possible
             val criteria = Criteria()
             criteria.accuracy = Criteria.ACCURACY_COARSE
             criteria.powerRequirement = Criteria.POWER_LOW
@@ -168,6 +171,7 @@ class ClassificationActivity : AppCompatActivity() {
         return true
     }
 
+    //Update of the Firestore database
     @Suppress("DEPRECATION")
     private fun sendPollInfo(
         tag: Int,
@@ -213,16 +217,16 @@ class ClassificationActivity : AppCompatActivity() {
         return true
     }
 
-
+    //Aggregation of the pollution levels
     @SuppressLint("SetTextI18n")
     private fun doAvg(location: Location, radiusInKm: Double, cityName: String) {
         val db = FirebaseFirestore.getInstance()
         val center = GeoLocation(location.latitude, location.longitude)
         val radiusInM = radiusInKm * 1000.0
 
-// Each item in 'bounds' represents a startAt/endAt pair. We have to issue
-// a separate query for each pair. There can be up to 9 pairs of bounds
-// depending on overlap, but in most cases there are 4.
+    /* Each item in 'bounds' represents a startAt/endAt pair. We have to issue
+       a separate query for each pair. There can be up to 9 pairs of bounds
+       depending on overlap, but in most cases there are 4.*/
         val bounds = GeoFireUtils.getGeoHashQueryBounds(center, radiusInM)
         val tasks: MutableList<Task<QuerySnapshot>> = java.util.ArrayList()
         for (b in bounds) {
@@ -233,7 +237,7 @@ class ClassificationActivity : AppCompatActivity() {
             tasks.add(q.get())
         }
 
-// Collect all the query results together into a single list
+        // Collects all the query results together into a single list
         Tasks.whenAllComplete(tasks)
             .addOnCompleteListener {
                 val matchingDocs: MutableList<DocumentSnapshot> = java.util.ArrayList()
@@ -244,8 +248,8 @@ class ClassificationActivity : AppCompatActivity() {
                         val lat = c!!.latitude
                         val lng = c.longitude
 
-                        // We have to filter out a few false positives due to GeoHash
-                        // accuracy, but most will match
+                        /* We have to filter out a few false positives due to GeoHash
+                           accuracy, but most will match*/
                         val docLocation = GeoLocation(lat, lng)
                         val distanceInM = GeoFireUtils.getDistanceBetween(docLocation, center)
                         if (distanceInM <= radiusInM) {
