@@ -49,7 +49,7 @@ The opencv library is already provided.</p>
 1. The more people use the app, the more accurate it becomes.
 2. The pollution estimation classifier achieves 96% accuracy based on the considered dataset. However, it's important to note that the accuracy may be influenced by the photos taken by users.
 
-<h2>💖Like my work?</h2>
+<h2>💖Like our work?</h2>
 
 Contact me if you have any corrections or additional features to offer me.
 
