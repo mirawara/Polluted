@@ -190,7 +190,7 @@ class ClassificationActivity : AppCompatActivity() {
         }
 
 
-        FirebaseApp.initializeApp(this) //questo va messo nella main activity
+        FirebaseApp.initializeApp(this)
         val db = FirebaseFirestore.getInstance()
 
 

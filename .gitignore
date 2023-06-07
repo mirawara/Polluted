@@ -1,38 +1,37 @@
 # Gradle files
-polluted/.gradle/
-polluted/build/
-polluted/.idea
+.gradle/
+build/
 .idea
 
 # Local configuration file (sdk path, etc)
-polluted/local.properties
+local.properties
 
 # Log/OS Files
-polluted/*.log
+*.log
 
 # Android Studio generated files and folders
-polluted/captures/
-polluted/.externalNativeBuild/
-polluted/.cxx/
-polluted/*.apk
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
 output.json
 
 # IntelliJ
-polluted/*.iml
-polluted/.idea/
-polluted/misc.xml
-polluted/deploymentTargetDropDown.xml
-polluted/render.experimental.xml
+*.iml
+.idea/
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
 
 # Keystore files
-polluted/*.jks
-polluted/*.keystore
+*.jks
+*.keystore
 
 # Google Services (e.g. APIs or Firebase)
-polluted/google-services.json
+google-services.json
 
 # Android Profiling
-polluted/*.hprof
+*.hprof
 
 #opencv
-polluted/opencv/build/
+opencv/build/
