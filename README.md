@@ -17,7 +17,7 @@
 
 
 
-<p id="description">Polluted is an Android app that estimates the pollution level based on a real-time sky photo. It utilizes two machine learning classifiers: one for pollution level estimation and another for sky recognition. The final output is computed by incorporating additional information stored in a Firebase Firestore Database. For more details, please refer to the <a href="https://github.com/mirawara/Polluted/wiki">Wiki</a>.
+<p id="description">Polluted is an Android app that estimates the pollution level based on a real-time sky photo. It utilizes two machine learning classifiers: one for pollution level estimation and another for sky recognition. The final output is computed by incorporating additional information stored in a Firebase Firestore Database. For more details, please refer to the <a href="https://github.com/mirawara/Polluted/wiki/Polluted-Wiki">Wiki</a>.
 </p>
 
   
@@ -43,7 +43,7 @@ The opencv library is already provided.</p>
 
 
 <h2>🖥️ Usage: </h2>
-<a href="https://github.com/mirawara/Polluted/wiki">Wiki</a>
+<a href="https://github.com/mirawara/Polluted/wiki/Polluted-Wiki">Wiki</a>
 <h2>😉 Info: </h2>
 
 1. The more people use the app, the more accurate it becomes.
