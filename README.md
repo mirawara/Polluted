@@ -58,4 +58,5 @@ Contact me if you have any corrections or additional features to offer me.
   <li><a href="https://github.com/mirawara">Lorenzo Mirabella</a></li>
   <li><a href="https://https://github.com/EdoardoLoni">Edoardo Loni</a></li>
   <li><a href="https://github.com/msanguinetti2">Marta Sanguinetti</a></li>
+    <li><a href="https://github.com/avivani99">Alessio Vivani</a></li>
 </ul>
