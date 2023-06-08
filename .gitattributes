@@ -1,2 +1,4 @@
-opencv/** linguist-vendored
+app/* linguist-detectable
+gradle/* linguist-detectable
+opencv/* linguist-vendored
 
