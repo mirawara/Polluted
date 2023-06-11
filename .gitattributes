@@ -1,4 +1,5 @@
 app/** linguist-detectable
 gradle/** linguist-detectable
 opencv/** linguist-vendored
+**/*.xml linguist-vendored
 
