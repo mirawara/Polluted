@@ -5,6 +5,7 @@
     <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-1.8.21-0095D5.svg?style=flat&logo=kotlin&logoColor=white" alt="Kotlin"></a>
     <a href="https://www.tensorflow.org/lite"><img src="https://img.shields.io/badge/TensorFlow Lite-0.1.100-FF6F00.svg?style=flat&logo=tensorflow&logoColor=white" alt="TensorFlow Lite"></a>
     <a href="https://opencv.org"><img src="https://img.shields.io/badge/OpenCV-4.7.0-5C3EE8.svg?style=flat&logo=opencv&logoColor=white" alt="OpenCV"></a>
+    <a href="https://gradle.org"><img src="https://img.shields.io/badge/Gradle-Latest-02303A.svg?style=flat&amp;logo=gradle&amp;logoColor=white" alt="Gradle"></a>
 </div>
 
 
