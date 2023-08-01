@@ -35,7 +35,7 @@ Here're some of the project's best features:
 <h2>🧠 Classifier:</h2>
 The classifiers were built using <a href="https://teachablemachine.withgoogle.com/">Google teachable machine</a>. They are in tensorflow-lite format in app/src/main/assets/.
 
-<h2>🛠️ Use Configuration:</h2>
+<h2>🛠️ Configuration:</h2>
 
 <p>After cloning the repository you have to create your own Firebase project and to update the google-services.json. For more information, please refer to the <a href="https://firebase.google.com/docs">Firebase documentation</a>.
 
